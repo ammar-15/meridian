@@ -1,18 +1,13 @@
 "use client";
 
+import "@fontsource/montserrat/800.css";
 import { FormEvent, useState } from "react";
-import { Montserrat } from "next/font/google";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: "800",
-});
 
 export default function HomePage() {
   const [name, setName] = useState("");
@@ -73,7 +68,9 @@ export default function HomePage() {
             <p className="inline-flex w-fit rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
               Early Access
             </p>
-            <CardTitle className={`${montserrat.className} text-4xl leading-none sm:text-5xl`}>Meridian</CardTitle>
+            <CardTitle className="text-4xl leading-none font-extrabold sm:text-5xl" style={{ fontFamily: "Montserrat, sans-serif" }}>
+              Meridian
+            </CardTitle>
             <CardDescription className="max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
               Join the waitlist to get early access. Share your suggestions so we can build the features you actually
               want first.
