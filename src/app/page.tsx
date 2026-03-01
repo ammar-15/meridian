@@ -1,17 +1,28 @@
- "use client";
+"use client";
 
 import { FormEvent, useState } from "react";
+import { Montserrat } from "next/font/google";
 import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: "800",
+});
 
 export default function HomePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [suggestions, setSuggestions] = useState("");
-  const [status, setStatus] = useState<{ type: "idle" | "success" | "error"; message: string }>({
-    type: "idle",
-    message: "",
-  });
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<{
+    type: "idle" | "success" | "error";
+    message: string;
+  }>({ type: "idle", message: "" });
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -52,95 +63,88 @@ export default function HomePage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
-      <div className="pointer-events-none absolute -left-24 top-0 h-64 w-64 rounded-full bg-accent/15 blur-3xl" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
-      <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center justify-center px-6 py-16">
-        <section className="w-full max-w-2xl rounded-2xl border border-border bg-card/95 p-8 shadow-[0_12px_60px_-30px_rgba(0,0,0,0.45)] backdrop-blur sm:p-10">
-          <p className="mb-3 inline-block rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold tracking-wide text-accent uppercase">
-            Early Access
-          </p>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Join the waitlist and help shape what we are building.
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-muted sm:text-base">
-            We are building this project in public and inviting a small group of early users first. Add your name
-            and email to reserve your spot, and share suggestions so we can prioritize the features that matter most.
-          </p>
+    <div className="relative min-h-screen overflow-hidden">
+      <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-primary/25 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
 
-          <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
-            <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="name">
-                Name <span className="text-accent">*</span>
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                required
-                className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/40"
-                placeholder="Your name"
-              />
-            </div>
+      <main className="mx-auto flex min-h-screen w-full max-w-5xl items-center px-6 py-16">
+        <Card className="w-full border-border/80 bg-card/95 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.4)] backdrop-blur">
+          <CardHeader className="space-y-4">
+            <p className="inline-flex w-fit rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold tracking-wider text-primary uppercase">
+              Early Access
+            </p>
+            <CardTitle className={`${montserrat.className} text-4xl leading-none sm:text-5xl`}>Meridian</CardTitle>
+            <CardDescription className="max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
+              Join the waitlist to get early access. Share your suggestions so we can build the features you actually
+              want first.
+            </CardDescription>
+          </CardHeader>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="email">
-                Email <span className="text-accent">*</span>
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-                className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/40"
-                placeholder="you@example.com"
-              />
-            </div>
+          <CardContent>
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div className="space-y-2">
+                <Label htmlFor="name">
+                  Name <span className="text-primary">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="Your name"
+                  required
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="suggestions">
-                Suggestions
-              </label>
-              <textarea
-                id="suggestions"
-                value={suggestions}
-                onChange={(event) => setSuggestions(event.target.value)}
-                rows={4}
-                className="w-full resize-y rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/40"
-                placeholder="What should we build first?"
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">
+                  Email <span className="text-primary">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex w-full items-center justify-center rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-foreground dark:text-background"
-            >
-              {loading ? "Joining..." : "Join Waitlist"}
-            </button>
+              <div className="space-y-2">
+                <Label htmlFor="suggestions">Suggestions</Label>
+                <Textarea
+                  id="suggestions"
+                  value={suggestions}
+                  onChange={(event) => setSuggestions(event.target.value)}
+                  placeholder="What should we build first?"
+                  rows={4}
+                />
+              </div>
 
-            {status.type !== "idle" && (
-              <p className={`text-sm ${status.type === "success" ? "text-green-700 dark:text-green-300" : "text-red-700 dark:text-red-300"}`}>
-                {status.message}
-              </p>
-            )}
-          </form>
-        </section>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Joining..." : "Join Waitlist"}
+              </Button>
 
-        <footer className="mt-10 text-center text-sm text-muted">
-          this project is being built by ammar{" "}
-          <a
-            href="https://ammar-15.github.io"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="font-semibold text-accent underline underline-offset-4"
-          >
-            ammar-15.github.io
-          </a>
-        </footer>
+              {status.type !== "idle" ? (
+                <p className={`text-sm ${status.type === "success" ? "text-green-600" : "text-red-600"}`}>
+                  {status.message}
+                </p>
+              ) : null}
+            </form>
+          </CardContent>
+        </Card>
       </main>
+
+      <footer className="pb-8 text-center text-sm text-muted-foreground">
+        this project is being built by ammar{" "}
+        <a
+          href="https://ammar-15.github.io"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="font-semibold text-primary underline underline-offset-4"
+        >
+          ammar-15.github.io
+        </a>
+      </footer>
     </div>
   );
 }
