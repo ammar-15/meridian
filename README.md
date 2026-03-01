@@ -1,32 +1,44 @@
-# Meridian Waitlist
+# Meridian
 
-Static waitlist landing page built with Next.js App Router.
+Sign up for the waitlist: https://www.meridian.vercel.app
 
-## Features
+Meridian is coming soon to the App Store and Google Play.
 
-- Light/Dark theme toggle
-- Supabase waitlist submission (`waitlist.waitlist`)
-- Required Name + Email with inline validation
-- Optional Suggestions field
-- Success/Error toasts and loading state
-- Snapshots section (`/public/snapshots/1.png` to `4.png`)
+## Why I made Meridian
 
-## Environment
+I got tired of missing buses that arrived early, and also waiting in cold weather
+for buses that showed up late and also missing my connections.
+Google Maps helps me plan routes, but it still doesn’t give enough
+live bus movement updates when I actually need to decide
+whether to leave now or wait. Metrobus has live-tracking data, but the website
+experience is hard to navigate for daily commuting.
 
-Uses existing variables in `.env`:
+I built Meridian to close that gap.
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+## What I’m building
 
-## Run
+Meridian combines maps-style navigation, real-time bus tracking, and personalized commute tools
+in one interface so users can plan, track, and adjust trips without app switching.
 
-```bash
-npm install
-npm run dev
-```
+## Core features
 
-## Build
+- Real-time bus movement in a maps-like interface
+- Direction of travel + bus position relative to user
+- Live ETA context for better connection decisions
+- Notification reminders before departure
+- Alternative route awareness when a bus is missed or delayed
+- Saved places (Home, Work, School, and custom)
+- Commute planning and reusable recurring trips
+- Trip history for quick reuse
 
-```bash
-npm run build
-```
+## Positioning
+
+Meridian is a transit navigation app that combines real-time bus tracking,
+maps-style navigation, and personalized commuting tools into one unified experience.
+
+## Data source disclaimer
+
+Transit data for the Meridian app is sourced from publicly available transit data
+provided by Metrobus Transit (St. John’s, NL). Meridian is an independent project
+and is not affiliated with or endorsed by Metrobus Transit.
+
