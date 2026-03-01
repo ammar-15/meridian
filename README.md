@@ -11,9 +11,9 @@ for buses that showed up late and also missing my connections.
 Google Maps helps me plan routes, but it still doesn’t give enough
 live bus movement updates when I actually need to decide
 whether to leave now or wait. Metrobus has live-tracking data, but the website
-experience is hard to navigate for daily commuting.
+experience is hard to navigate for daily commuting. 
 
-I built Meridian to close that gap.
+After five years from the initial idea, I’m finally building Meridian to close that gap.
 
 ## What I’m building
 
