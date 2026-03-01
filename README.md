@@ -1,6 +1,6 @@
 # Meridian
 
-Sign up for the waitlist: https://www.meridian.vercel.app
+Sign up for the waitlist: https://meridian-transit.vercel.app/
 
 Meridian is coming soon to the App Store and Google Play.
 
