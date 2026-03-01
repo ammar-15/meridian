@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "@fontsource/inter/400.css";
+@import "@fontsource/montserrat/800.css";
+
+@layer base {
+  :root {
+    --background: 40 100% 94%;
+    --foreground: 0 0% 0%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+
+    --primary: 222 72% 48%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 220 70% 96%;
+    --secondary-foreground: 222 72% 38%;
+
+    --muted: 40 65% 89%;
+    --muted-foreground: 0 0% 20%;
+
+    --accent: 222 72% 48%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 72% 49%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 222 72% 48% / 0.22;
+    --input: 222 72% 48% / 0.24;
+    --ring: 222 72% 48%;
+
+    --radius: 0.7rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: 221 60% 11%;
+      --foreground: 0 0% 100%;
+
+      --card: 222 35% 14%;
+      --card-foreground: 0 0% 100%;
+
+      --popover: 222 35% 14%;
+      --popover-foreground: 0 0% 100%;
+
+      --primary: 40 100% 94%;
+      --primary-foreground: 221 60% 11%;
+
+      --secondary: 221 45% 20%;
+      --secondary-foreground: 40 100% 94%;
+
+      --muted: 221 40% 19%;
+      --muted-foreground: 0 0% 85%;
+
+      --accent: 40 100% 94%;
+      --accent-foreground: 221 60% 11%;
+
+      --destructive: 0 75% 60%;
+      --destructive-foreground: 0 0% 98%;
+
+      --border: 40 100% 94% / 0.22;
+      --input: 40 100% 94% / 0.24;
+      --ring: 40 100% 94%;
+    }
+  }
+
+  .dark {
+    --background: 221 60% 11%;
+    --foreground: 0 0% 100%;
+    --card: 222 35% 14%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 35% 14%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 40 100% 94%;
+    --primary-foreground: 221 60% 11%;
+    --secondary: 221 45% 20%;
+    --secondary-foreground: 40 100% 94%;
+    --muted: 221 40% 19%;
+    --muted-foreground: 0 0% 85%;
+    --accent: 40 100% 94%;
+    --accent-foreground: 221 60% 11%;
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 40 100% 94% / 0.22;
+    --input: 40 100% 94% / 0.24;
+    --ring: 40 100% 94%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
+    background-image:
+      radial-gradient(
+        circle at 8% 8%,
+        hsl(var(--primary) / 0.12),
+        transparent 36%
+      ),
+      radial-gradient(
+        circle at 92% 90%,
+        hsl(var(--primary) / 0.14),
+        transparent 36%
+      );
+  }
+}
+
+.font-heading {
+  font-family: "Montserrat", "Inter Variable", sans-serif;
+}
+
+::selection {
+  @apply bg-primary/25 text-foreground;
+}
