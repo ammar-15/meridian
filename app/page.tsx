@@ -1,59 +1,56 @@
 "use client";
 
-import Image from "next/image";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/lib/supabaseClient";
+import CTA from "@/components/cta";
+import Form from "@/components/form";
+import Logos from "@/components/logos";
 import Particles from "@/components/ui/particles";
+import Header from "@/components/header";
+import { supabase } from "@/lib/supabaseClient";
+
+const DRAFT_KEY = "waitlist_form_draft";
 
 export default function Home() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [fieldErrors, setFieldErrors] = useState<{
-    name?: string;
-    email?: string;
-  }>({});
-  const [statusMessage, setStatusMessage] = useState<{
-    type: "idle" | "success" | "error";
-    message: string;
-  }>({ type: "idle", message: "" });
-  const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-    const initialTheme =
-      savedTheme === "dark" || savedTheme === "light"
-        ? (savedTheme as "dark" | "light")
-        : prefersDark
-          ? "dark"
-          : "light";
-
-    setTheme(initialTheme);
-    document.documentElement.classList.toggle("dark", initialTheme === "dark");
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw) as {
+        name?: string;
+        email?: string;
+        suggestions?: string;
+      };
+      setName(draft.name ?? "");
+      setEmail(draft.email ?? "");
+      setSuggestions(draft.suggestions ?? "");
+    } catch {
+      // Ignore malformed local draft values.
+    }
   }, []);
 
-  const toggleTheme = () => {
-    const nextTheme = theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
-    localStorage.setItem("theme", nextTheme);
-    document.documentElement.classList.toggle("dark", nextTheme === "dark");
-  };
+  useEffect(() => {
+    localStorage.setItem(
+      DRAFT_KEY,
+      JSON.stringify({
+        name,
+        email,
+        suggestions,
+      }),
+    );
+  }, [name, email, suggestions]);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
-    setFieldErrors((prev) => ({ ...prev, email: undefined }));
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
-    setFieldErrors((prev) => ({ ...prev, name: undefined }));
   };
 
   const handleSuggestionsChange = (
@@ -67,225 +64,93 @@ export default function Home() {
     return emailRegex.test(email);
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    const errors: { name?: string; email?: string } = {};
-
-    if (!name.trim()) {
-      errors.name = "Please enter your name.";
+  const handleSubmit = async () => {
+    if (!name || !email) {
+      toast.error("Please fill in all fields 😠");
+      return;
     }
 
-    if (!email.trim()) {
-      errors.email = "Please enter your email.";
-    } else if (!isValidEmail(email)) {
-      errors.email = "Please enter a valid email.";
-    }
-
-    setFieldErrors(errors);
-
-    if (Object.keys(errors).length > 0) {
-      setStatusMessage({
-        type: "error",
-        message: "Please fix the highlighted fields.",
-      });
-      toast.error("Please fix the highlighted fields.");
+    if (!isValidEmail(email)) {
+      toast.error("Please enter a valid email address 😠");
       return;
     }
 
     setLoading(true);
-    setStatusMessage({ type: "idle", message: "" });
 
-    const { error } = await supabase.from("waitlist").insert({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      suggestions: suggestions.trim() || null,
-    });
+    const promise = new Promise(async (resolve, reject) => {
+      const { error } = await supabase.from("waitlist").insert({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        suggestions: suggestions.trim() || null,
+      });
 
-    setLoading(false);
-
-    if (error) {
-      if (
-        error.code === "23505" ||
-        error.message.toLowerCase().includes("duplicate")
-      ) {
-        const duplicateMessage = "You're already on the list — thanks!";
-        setStatusMessage({ type: "success", message: duplicateMessage });
-        toast.success(duplicateMessage);
+      if (error) {
+        if (
+          error.code === "23505" ||
+          error.message.toLowerCase().includes("duplicate")
+        ) {
+          reject("Duplicate email");
+          return;
+        }
+        reject("Supabase insertion failed");
         return;
       }
 
-      const errorMessage = "Something went wrong. Please try again.";
-      setStatusMessage({ type: "error", message: errorMessage });
-      toast.error(errorMessage);
-      return;
-    }
+      resolve({ name });
+    });
 
-    setName("");
-    setEmail("");
-    setSuggestions("");
-    setFieldErrors({});
-    const successMessage = "You're on the waitlist. We'll be in touch soon.";
-    setStatusMessage({ type: "success", message: successMessage });
-    toast.success(successMessage);
+    toast.promise(promise, {
+      loading: "Getting you on the waitlist... 🚀",
+      success: (data) => {
+        setName("");
+        setEmail("");
+        setSuggestions("");
+        localStorage.removeItem(DRAFT_KEY);
+        return "Thank you for joining the waitlist 🎉";
+      },
+      error: (error) => {
+        if (error === "Duplicate email") {
+          return "You're already on the list — thanks!";
+        } else if (error === "Supabase insertion failed") {
+          return "Failed to save your details. Please try again 😢.";
+        }
+        return "An error occurred. Please try again 😢.";
+      },
+    });
+
+    promise.finally(() => {
+      setLoading(false);
+    });
   };
 
   return (
-    <main className="min-h-screen bg-background px-4 pb-14 pt-14 sm:px-6 md:pt-20">
+    <main className="flex min-h-screen flex-col items-center overflow-x-clip pt-12 md:pt-24">
+      <section className="flex flex-col items-center px-4 sm:px-6 lg:px-8">
+        <Header />
+
+        <CTA />
+
+        <Form
+          name={name}
+          email={email}
+          suggestions={suggestions}
+          handleNameChange={handleNameChange}
+          handleEmailChange={handleEmailChange}
+          handleSuggestionsChange={handleSuggestionsChange}
+          handleSubmit={handleSubmit}
+          loading={loading}
+        />
+
+        <Logos />
+      </section>
+
       <Particles
-        quantityDesktop={250}
-        quantityMobile={120}
-        ease={70}
-        color={theme === "dark" ? "#FFF6DF" : "#1D4ED8"}
-        className="opacity-35"
+        quantityDesktop={350}
+        quantityMobile={100}
+        ease={80}
+        color={"#FFF6DF"}
+        refresh
       />
-      <div className="mx-auto w-full max-w-4xl">
-        <div className="mb-6 flex justify-end">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={toggleTheme}
-            className="h-10 px-4"
-          >
-            {theme === "dark" ? "Light mode" : "Dark mode"}
-          </Button>
-        </div>
-
-        <section className="flex flex-col items-center text-center">
-          <div className="mb-5 flex items-center justify-center gap-3">
-            <div className="h-8 w-8 rounded-md bg-primary sm:h-9 sm:w-9" />
-            <h1 className="font-heading text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl">
-              Meridian
-            </h1>
-          </div>
-          <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Meridian is coming soon. Join the waitlist to get early access and
-            help shape what we ship first.
-          </p>
-        </section>
-
-        <section className="mt-10 rounded-2xl border border-border bg-card/90 p-6 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.65)] backdrop-blur sm:p-8">
-          <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-            <div className="space-y-2">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-foreground"
-              >
-                Name <span className="text-primary">*</span>
-              </label>
-              <Input
-                id="name"
-                name="name"
-                value={name}
-                onChange={handleNameChange}
-                placeholder="Your name"
-                aria-invalid={!!fieldErrors.name}
-                aria-describedby={fieldErrors.name ? "name-error" : undefined}
-                required
-              />
-              {fieldErrors.name ? (
-                <p id="name-error" className="text-sm text-destructive">
-                  {fieldErrors.name}
-                </p>
-              ) : null}
-            </div>
-
-            <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-foreground"
-              >
-                Email <span className="text-primary">*</span>
-              </label>
-              <Input
-                id="email"
-                name="email"
-                value={email}
-                onChange={handleEmailChange}
-                type="email"
-                placeholder="you@example.com"
-                aria-invalid={!!fieldErrors.email}
-                aria-describedby={fieldErrors.email ? "email-error" : undefined}
-                required
-              />
-              {fieldErrors.email ? (
-                <p id="email-error" className="text-sm text-destructive">
-                  {fieldErrors.email}
-                </p>
-              ) : null}
-            </div>
-
-            <div className="space-y-2">
-              <label
-                htmlFor="suggestions"
-                className="block text-sm font-medium text-foreground"
-              >
-                Suggestions
-              </label>
-              <textarea
-                id="suggestions"
-                name="suggestions"
-                value={suggestions}
-                onChange={handleSuggestionsChange}
-                rows={4}
-                placeholder="Anything you want us to build first?"
-                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/40"
-              />
-            </div>
-
-            <Button type="submit" disabled={loading} className="h-11 w-full">
-              {loading ? "Joining..." : "Join"}
-            </Button>
-
-            {statusMessage.type !== "idle" ? (
-              <p
-                className={`text-sm ${
-                  statusMessage.type === "success"
-                    ? "text-emerald-600 dark:text-emerald-400"
-                    : "text-destructive"
-                }`}
-                role="status"
-              >
-                {statusMessage.message}
-              </p>
-            ) : null}
-          </form>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="mb-5 text-center text-xl font-semibold text-foreground">
-            Snapshots of progress
-          </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {[1, 2, 3, 4].map((num) => (
-              <div
-                key={num}
-                className="relative overflow-hidden rounded-2xl border border-border bg-card/90 p-2 shadow-sm"
-              >
-                <Image
-                  src={`/snapshots/${num}.png`}
-                  alt={`Screenshot ${num}`}
-                  width={720}
-                  height={1280}
-                  className="h-auto w-full rounded-xl"
-                />
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <footer className="mt-14 border-t border-border pt-6 text-center text-sm text-muted-foreground">
-          This project is being built by Ammar{" "}
-          <a
-            href="https://ammar-15.github.io"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-80"
-          >
-            ammar-15.github.io
-          </a>
-        </footer>
-      </div>
     </main>
   );
 }

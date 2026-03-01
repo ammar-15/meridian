@@ -1,94 +1,70 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "@fontsource/inter/400.css";
-@import "@fontsource/montserrat/800.css";
+@import "@fontsource/figtree/400.css";
+@import "@fontsource/figtree/700.css";
 
 @layer base {
   :root {
-    --background: 40 100% 94%;
-    --foreground: 0 0% 0%;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 222 72% 48%;
+    --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 220 70% 96%;
-    --secondary-foreground: 222 72% 38%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 40 65% 89%;
-    --muted-foreground: 0 0% 20%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 222 72% 48%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
-    --destructive: 0 72% 49%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 222 72% 48% / 0.22;
-    --input: 222 72% 48% / 0.24;
-    --ring: 222 72% 48%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
 
-    --radius: 0.7rem;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 221 60% 11%;
-      --foreground: 0 0% 100%;
-
-      --card: 222 35% 14%;
-      --card-foreground: 0 0% 100%;
-
-      --popover: 222 35% 14%;
-      --popover-foreground: 0 0% 100%;
-
-      --primary: 40 100% 94%;
-      --primary-foreground: 221 60% 11%;
-
-      --secondary: 221 45% 20%;
-      --secondary-foreground: 40 100% 94%;
-
-      --muted: 221 40% 19%;
-      --muted-foreground: 0 0% 85%;
-
-      --accent: 40 100% 94%;
-      --accent-foreground: 221 60% 11%;
-
-      --destructive: 0 75% 60%;
-      --destructive-foreground: 0 0% 98%;
-
-      --border: 40 100% 94% / 0.22;
-      --input: 40 100% 94% / 0.24;
-      --ring: 40 100% 94%;
-    }
+    --radius: 0.5rem;
   }
 
   .dark {
     --background: 221 60% 11%;
-    --foreground: 0 0% 100%;
-    --card: 222 35% 14%;
-    --card-foreground: 0 0% 100%;
-    --popover: 222 35% 14%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 40 100% 94%;
-    --primary-foreground: 221 60% 11%;
-    --secondary: 221 45% 20%;
-    --secondary-foreground: 40 100% 94%;
-    --muted: 221 40% 19%;
-    --muted-foreground: 0 0% 85%;
-    --accent: 40 100% 94%;
-    --accent-foreground: 221 60% 11%;
-    --destructive: 0 75% 60%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 40 100% 94% / 0.22;
-    --input: 40 100% 94% / 0.24;
-    --ring: 40 100% 94%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
   }
 }
 
@@ -98,25 +74,12 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
-    background-image:
-      radial-gradient(
-        circle at 8% 8%,
-        hsl(var(--primary) / 0.12),
-        transparent 36%
-      ),
-      radial-gradient(
-        circle at 92% 90%,
-        hsl(var(--primary) / 0.14),
-        transparent 36%
-      );
+    font-family: "Figtree", sans-serif;
   }
 }
 
-.font-heading {
-  font-family: "Montserrat", "Inter Variable", sans-serif;
-}
-
-::selection {
-  @apply bg-primary/25 text-foreground;
+body {
+  ::selection {
+    @apply bg-accent text-[#FFF6DF];
+  }
 }
