@@ -8,10 +8,8 @@ import { EnhancedButton } from "@/components/ui/enhanced-btn";
 import { containerVariants, itemVariants } from "@/lib/animation-variants";
 
 interface FormProps {
-  name: string;
   email: string;
   suggestions: string;
-  handleNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleEmailChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleSuggestionsChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   handleSubmit: () => void;
@@ -19,10 +17,8 @@ interface FormProps {
 }
 
 export default function Form({
-  name,
   email,
   suggestions,
-  handleNameChange,
   handleEmailChange,
   handleSuggestionsChange,
   handleSubmit,
@@ -34,15 +30,6 @@ export default function Form({
       variants={containerVariants}
       initial="hidden"
       animate="visible">
-      <motion.div variants={itemVariants}>
-        <Input
-          type="text"
-          placeholder="Your Name"
-          value={name}
-          onChange={handleNameChange}
-          required
-        />
-      </motion.div>
       <motion.div variants={itemVariants}>
         <Input
           type="email"

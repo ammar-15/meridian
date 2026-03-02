@@ -12,7 +12,6 @@ import { supabase } from "@/lib/supabaseClient";
 const DRAFT_KEY = "waitlist_form_draft";
 
 export default function Home() {
-  const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -22,11 +21,9 @@ export default function Home() {
       const raw = localStorage.getItem(DRAFT_KEY);
       if (!raw) return;
       const draft = JSON.parse(raw) as {
-        name?: string;
         email?: string;
         suggestions?: string;
       };
-      setName(draft.name ?? "");
       setEmail(draft.email ?? "");
       setSuggestions(draft.suggestions ?? "");
     } catch {
@@ -38,19 +35,14 @@ export default function Home() {
     localStorage.setItem(
       DRAFT_KEY,
       JSON.stringify({
-        name,
         email,
         suggestions,
       }),
     );
-  }, [name, email, suggestions]);
+  }, [email, suggestions]);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
-  };
-
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
   };
 
   const handleSuggestionsChange = (
@@ -65,8 +57,8 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
-    if (!name || !email) {
-      toast.error("Please fill in all fields 😠");
+    if (!email) {
+      toast.error("Please enter your email 😠");
       return;
     }
 
@@ -79,7 +71,6 @@ export default function Home() {
 
     const promise = new Promise(async (resolve, reject) => {
       const { error } = await supabase.from("waitlist").insert({
-        name: name.trim(),
         email: email.trim().toLowerCase(),
         suggestions: suggestions.trim() || null,
       });
@@ -92,17 +83,16 @@ export default function Home() {
           reject("Duplicate email");
           return;
         }
-        reject("Supabase insertion failed");
+        reject(error.message || "Supabase insertion failed");
         return;
       }
 
-      resolve({ name });
+      resolve({ email });
     });
 
     toast.promise(promise, {
       loading: "Getting you on the waitlist... 🚀",
-      success: (data) => {
-        setName("");
+      success: () => {
         setEmail("");
         setSuggestions("");
         localStorage.removeItem(DRAFT_KEY);
@@ -114,7 +104,9 @@ export default function Home() {
         } else if (error === "Supabase insertion failed") {
           return "Failed to save your details. Please try again 😢.";
         }
-        return "An error occurred. Please try again 😢.";
+        return typeof error === "string"
+          ? error
+          : "An error occurred. Please try again 😢.";
       },
     });
 
@@ -131,10 +123,8 @@ export default function Home() {
         <CTA />
 
         <Form
-          name={name}
           email={email}
           suggestions={suggestions}
-          handleNameChange={handleNameChange}
           handleEmailChange={handleEmailChange}
           handleSuggestionsChange={handleSuggestionsChange}
           handleSubmit={handleSubmit}

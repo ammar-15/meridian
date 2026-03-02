@@ -37,6 +37,7 @@ export default function Logos() {
               alt={shot.alt}
               width={720}
               height={1280}
+              priority={index === 0}
               className="h-auto w-full rounded-xl object-cover"
             />
           </div>
